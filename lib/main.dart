@@ -1,18 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mnctest/liveness.dart';
-
-class MyImageCache extends ImageCache {
-  @override
-  void clear() {
-    print('Clearing cache!');
-    super.clear();
-  }
-}
-
-class MyWidgetsBinding extends WidgetsFlutterBinding {
-  @override
-  ImageCache createImageCache() => MyImageCache();
-}
+import 'package:mnctest/widgets/Images/imageCache.dart';
 
 void main() {
   MyWidgetsBinding();

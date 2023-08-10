@@ -1,19 +1,25 @@
 package com.example.mnctest
 
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.annotation.NonNull
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.face.FaceDetection
+import com.google.mlkit.vision.face.FaceDetectorOptions
 import id.mncinnovation.face_detection.MNCIdentifier
-import id.mncinnovation.face_detection.MNCIdentifier.getLivenessIntent
 import id.mncinnovation.face_detection.MNCIdentifier.setDetectionModeSequence
-import id.mncinnovation.face_detection.SelfieWithKtpActivity
 import id.mncinnovation.face_detection.analyzer.DetectionMode
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import java.util.*
 
+
 class MainActivity: FlutterActivity() {
+    private val faceDetector = FaceDetection.getClient()
     private val CHANNEL = "liveness.face.detection/face"
     private lateinit var _result: MethodChannel.Result
     var LIVENESS_DETECTION_REQUEST_CODE = 101
@@ -30,6 +36,7 @@ class MainActivity: FlutterActivity() {
         super.configureFlutterEngine(flutterEngine)
 
         fun startFaceDetection(){
+
             setDetectionModeSequence(true, Arrays.asList(DetectionMode.HOLD_STILL,DetectionMode.SHAKE_HEAD))
             startActivityForResult(MNCIdentifier.getLivenessIntent(this), LIVENESS_DETECTION_REQUEST_CODE)
         }
@@ -47,6 +54,25 @@ class MainActivity: FlutterActivity() {
     }
 
 
+     fun analyze(filePath : String) {
+
+         val bmImg = BitmapFactory.decodeFile(filePath.split("file://")[1])
+         faceDetector.process(InputImage.fromBitmap(bmImg,90))
+             .addOnSuccessListener { listFace ->
+                 Log.v("FlutterActivity", "listFace=" + listFace);
+
+              //   listener.onFaceDetectionSuccess(listFace)
+             }
+             .addOnFailureListener { exception ->
+
+                 Log.v("FlutterActivity", "exception=" + exception);
+              //   listener.onFaceDetectionFailure(exception)
+             }
+             .addOnCompleteListener {
+               //  image.close()
+             }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK) {
@@ -57,10 +83,16 @@ class MainActivity: FlutterActivity() {
                     livenessResult?.let { result ->
                         if (result.isSuccess) {
                             val detectionResults = result.detectionResult!!;
-                            val res = detectionResults.map { r -> r.image.toString() }; // detectionResults[0].image.toString();
+                            val res = detectionResults.map { r -> r.image.toString() };
+
+                           // Log.v("FlutterActivity", "image" + res[0]);
+
+                            // detectionResults[0].image.toString();
+                         //  analyze(res[0])
                             _result.success(res);// check if liveness detection success
                             // get image result
                             val bitmap = result.getBitmap(this, DetectionMode.SMILE)
+
                         } else {  //Liveness Detection Error
                             //get Error Message
                             val errorMessage = result.errorMessage

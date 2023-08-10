@@ -2,9 +2,6 @@ import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:photo_manager/photo_manager.dart';
 import 'main.dart';
 
 class LiveNessScreen extends StatefulWidget {
@@ -18,17 +15,17 @@ class _LiveNessScreenState extends State<LiveNessScreen> {
   static const platform = MethodChannel('liveness.face.detection/face');
   List<String>? imageList;
 
-  Future<void> accessFileSystem() async {
-    // Get the directory where documents are stored.
-    Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    // Create a new file within the directory.
-    File file = File('${documentsDirectory.path}/$imageList');
-    // Write some data to the file.
-    print('documentsDirectory:$documentsDirectory');
-    // Read data from the file.
-    // String fileContent = await file.readAsString();
-    // print('File content: $fileContent');
-  }
+  // Future<void> accessFileSystem() async {
+  //   // Get the directory where documents are stored.
+  //   Directory documentsDirectory = await getApplicationDocumentsDirectory();
+  //   // Create a new file within the directory.
+  //   File file = File('${documentsDirectory.path}/$imageList');
+  //   // Write some data to the file.
+  //   print('documentsDirectory:$documentsDirectory');
+  //   // Read data from the file.
+  //   // String fileContent = await file.readAsString();
+  //   // print('File content: $fileContent');
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +51,9 @@ class _LiveNessScreenState extends State<LiveNessScreen> {
             imageList != null
                 ? Row(
                     children: imageList!
-                        .map((img) => Image.file(
-                              File(img.split("file://")[1]),
+                        .map((img) => Image(
+                              key: UniqueKey(),
+                              image: FileImage(File(img.split("file://")[1])),
                               width: 200,
                               height: 200,
                             ))
@@ -64,9 +62,9 @@ class _LiveNessScreenState extends State<LiveNessScreen> {
             ElevatedButton(
                 onPressed: () async {
                   try {
-                    if (imageList != null) {
-                      PhotoManager.clearFileCache();
-                    }
+                    // if (imageList != null) {
+                    //   PhotoManager.clearFileCache();
+                    // }
 
                     var result =
                         await platform.invokeListMethod("startFaceDetection");
@@ -75,6 +73,8 @@ class _LiveNessScreenState extends State<LiveNessScreen> {
                         setState(() {
                           var _result = result.cast<String>();
                           imageList = _result as List<String>;
+                          imageCache.clear();
+                          imageCache.clearLiveImages();
                         });
                       });
                     }
