@@ -15,6 +15,8 @@ import id.mncinnovation.face_detection.analyzer.DetectionMode
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import java.io.File
+import java.io.FileInputStream
 import java.util.*
 
 
@@ -32,12 +34,28 @@ class MainActivity: FlutterActivity() {
         super.onCreate(savedInstanceState)
     }
 
+
+    private fun convertImageToByteArrayAndProcess(filePath: String) {
+        try {
+            val file = File(filePath.split("file://")[1])
+            val inputStream = FileInputStream(file)
+            val byteArray = inputStream.readBytes()
+
+            analyze(byteArray)
+
+            inputStream.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
         fun startFaceDetection(){
 
-            setDetectionModeSequence(true, Arrays.asList(DetectionMode.HOLD_STILL,DetectionMode.SHAKE_HEAD))
+            //DetectionMode.SHAKE_HEAD
+            setDetectionModeSequence(true, Arrays.asList(DetectionMode.HOLD_STILL))
             startActivityForResult(MNCIdentifier.getLivenessIntent(this), LIVENESS_DETECTION_REQUEST_CODE)
         }
 
@@ -54,10 +72,20 @@ class MainActivity: FlutterActivity() {
     }
 
 
-     fun analyze(filePath : String) {
+     fun analyze(byteArray: ByteArray) {
 
-         val bmImg = BitmapFactory.decodeFile(filePath.split("file://")[1])
-         faceDetector.process(InputImage.fromBitmap(bmImg,90))
+        // val bmImg = BitmapFactory.decodeFile(filePath.split("file://")[1])
+
+         val inputImage = InputImage.fromByteArray(
+             byteArray,
+             480,
+             360,
+            90,
+             InputImage.IMAGE_FORMAT_BITMAP // or InputImage.IMAGE_FORMAT_YV12 depending on your image format
+         )
+
+
+         faceDetector.process(inputImage)
              .addOnSuccessListener { listFace ->
                  Log.v("FlutterActivity", "listFace=" + listFace);
 
@@ -88,7 +116,9 @@ class MainActivity: FlutterActivity() {
                            // Log.v("FlutterActivity", "image" + res[0]);
 
                             // detectionResults[0].image.toString();
-                         //  analyze(res[0])
+
+                            convertImageToByteArrayAndProcess(res[0])
+
                             _result.success(res);// check if liveness detection success
                             // get image result
                             val bitmap = result.getBitmap(this, DetectionMode.SMILE)
