@@ -37,7 +37,7 @@ class MainActivity: FlutterActivity() {
 
         fun startFaceDetection(){
 
-            setDetectionModeSequence(true, Arrays.asList(DetectionMode.HOLD_STILL,DetectionMode.SHAKE_HEAD))
+            setDetectionModeSequence(true, Arrays.asList(DetectionMode.HOLD_STILL))
             startActivityForResult(MNCIdentifier.getLivenessIntent(this), LIVENESS_DETECTION_REQUEST_CODE)
         }
 
