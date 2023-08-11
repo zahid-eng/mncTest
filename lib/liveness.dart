@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'main.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:image/image.dart' as img;
+import 'package:path_provider/path_provider.dart';
 
 class LiveNessScreen extends StatefulWidget {
   const LiveNessScreen({super.key});
@@ -18,6 +19,7 @@ class _LiveNessScreenState extends State<LiveNessScreen> {
   static const platform = MethodChannel('liveness.face.detection/face');
   List<String>? imageList;
   Uint8List? faceImage;
+  String? croppedImage;
 
   // late final InputImage inputImage;
   // final options = FaceDetectorOptions();
@@ -85,12 +87,23 @@ class _LiveNessScreenState extends State<LiveNessScreen> {
         y: faceMaps[0]['y']!,
         width: faceMaps[0]['w']!,
         height: faceMaps[0]['h']!);
+
+    // Save the cropped image as PNG
+    List<int> pngBytes = img.encodePng(faceCrop);
+    Directory appDirectory = await getApplicationDocumentsDirectory();
+
+    String filePath = '${appDirectory.path}/cropped_image.png';
+
+    File croppedFile = File(filePath);
+    await croppedFile.writeAsBytes(pngBytes);
+
     setState(() {
-      //var abc = faceCrop.data;
-      faceImage = Uint8List.fromList(faceCrop.data!.toUint8List());
+      //faceImage = Uint8List.fromList(faceCrop.toUint8List());
       // Uint8List faceImage = base64.decode(faceCrop.);
 
       // faceImage = img.decodeImage(faceCrop.data!.) as Uint8List?;
+
+      croppedImage = filePath;
     });
   }
 
@@ -128,7 +141,17 @@ class _LiveNessScreenState extends State<LiveNessScreen> {
                 : SizedBox(),
             faceImage != null
                 ? Column(
-                    children: [Text("I am here"), Image.memory(faceImage!)],
+                    children: [
+                      Text("I am here"),
+                      Image(
+                        key: UniqueKey(),
+                        image: FileImage(
+                          File(croppedImage.toString()),
+                        ),
+                        width: 200,
+                        height: 200,
+                      )
+                    ],
                   )
                 : SizedBox(),
             ElevatedButton(
