@@ -91,8 +91,9 @@ class _LiveNessScreenState extends State<LiveNessScreen> {
     // Save the cropped image as PNG
     List<int> pngBytes = img.encodePng(faceCrop);
     Directory appDirectory = await getApplicationDocumentsDirectory();
-
-    String filePath = '${appDirectory.path}/cropped_image.png';
+    String filePath =
+        '${appDirectory.path}/cropped_image${DateTime.now().microsecondsSinceEpoch}.png';
+    // hamare pass static path us ko dynamic k lye kia hum ne
 
     File croppedFile = File(filePath);
     await croppedFile.writeAsBytes(pngBytes);
@@ -139,29 +140,25 @@ class _LiveNessScreenState extends State<LiveNessScreen> {
                             ))
                         .toList())
                 : SizedBox(),
-            faceImage != null
-                ? Column(
-                    children: [
-                      Text("I am here"),
-                      Image(
-                        key: UniqueKey(),
-                        image: FileImage(
-                          File(croppedImage.toString()),
-                        ),
-                        width: 200,
-                        height: 200,
-                      )
-                    ],
+
+            croppedImage != null
+                ? Padding(
+                    padding: const EdgeInsets.only(left: 20, top: 20),
+                    child: Row(
+                      children: [
+                        Image.file(File(croppedImage.toString())),
+                      ],
+                    ),
                   )
                 : SizedBox(),
             ElevatedButton(
                 onPressed: () async {
                   try {
-                    imageCache.clear();
-                    imageCache.clearLiveImages();
                     // if (imageList != null) {
                     //   PhotoManager.clearFileCache();
                     // }
+                    imageCache.clear();
+                    imageCache.clearLiveImages();
 
                     var result =
                         await platform.invokeListMethod("startFaceDetection");
