@@ -16,9 +16,13 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import java.util.*
+import io.flutter.embedding.android.FlutterFragmentActivity
 
 
-class MainActivity: FlutterActivity() {
+
+
+
+class MainActivity: FlutterFragmentActivity() {
     private val faceDetector = FaceDetection.getClient()
     private val CHANNEL = "liveness.face.detection/face"
     private lateinit var _result: MethodChannel.Result
