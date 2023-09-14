@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mnctest/MySlide/my_bottomtop.dart';
+import 'package:mnctest/MySlide/my_fade_transition.dart';
+import 'package:mnctest/MySlide/my_slide_transition..dart';
+import 'package:mnctest/MySlide/my_topbottom.dart';
 import 'package:mnctest/constant/constant.dart';
 import 'package:mnctest/screens/home.dart';
 import 'package:mnctest/widgets/Button.dart';
@@ -29,10 +33,16 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset(
-                        "assets/images/profile.png",
-                        height: 100,
-                        width: 100,
+                      MySlideTransition(
+                        duration: 700,
+                        child: MyFadeAnimation(
+                          duration: 600,
+                          child: Image.asset(
+                            "assets/images/profile.png",
+                            height: 100,
+                            width: 100,
+                          ),
+                        ),
                       ),
                       Text(
                         "Attenance App",
@@ -55,33 +65,46 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: TextInput(
-                hintText: "Enter Email",
-                icon: Icon(
-                  Icons.email,
-                  color: teal,
+              child: MyFadeAnimation(
+                duration: 300,
+                child: MySlideTransition(
+                  duration: 700,
+                  child: TextInput(
+                    hintText: "Enter Email",
+                    icon: Icon(
+                      Icons.email,
+                      color: teal,
+                    ),
+                  ),
                 ),
               ),
             ),
             SizedBox(
-              height: 20,
+              height: 15,
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: CustomButton(
-                  title: "Sent",
-                  color: teal,
-                  ontap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const HomePage()),
-                    );
-                  }),
+              child: SlidebottomtoTop(
+                duration: 600,
+                child: MyFadeAnimation(
+                  duration: 200,
+                  child: CustomButton(
+                      title: "Sent",
+                      color: teal,
+                      ontap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const HomePage()),
+                        );
+                      }),
+                ),
+              ),
             ),
             Align(
               alignment: Alignment.centerRight,
               child: Padding(
-                padding: const EdgeInsets.only(right: 20),
+                padding: const EdgeInsets.only(right: 20, top: 10),
                 child: CustomTextButton(
                     title: "Login",
                     ontap: () {

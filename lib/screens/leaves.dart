@@ -129,7 +129,7 @@ class _LeavesScreenState extends State<LeavesScreen>
                                   horizontalOffset: 50.0,
                                   child: FadeInAnimation(
                                     child: Card(
-                                      color: deepurple,
+                                      color: Colors.white,
                                       margin: EdgeInsets.symmetric(
                                           horizontal: 10, vertical: 5),
                                       child: ListTile(

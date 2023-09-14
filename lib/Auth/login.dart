@@ -125,30 +125,17 @@ class _LoginScreenState extends State<LoginScreen> {
             child: SingleChildScrollView(
           child: Column(
             children: [
-              ClipPath(
-                clipBehavior: Clip.hardEdge,
-                child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: size.height * 0.4,
-                    color: teal,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          "assets/images/profile.png",
-                          height: 100,
-                          width: 100,
-                        ),
-                        Text(
-                          "Attenance App",
-                          style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600),
-                        )
-                      ],
-                    )),
-                clipper: CustomClipPath(),
+              Container(
+                child: Image.asset(
+                  "assets/images/logi.png",
+                  height: size.height * 0.3,
+                  width: size.height * 0.3,
+                ),
+              ),
+              Text(
+                "Attendance App",
+                style: TextStyle(
+                    fontSize: 20, color: teal, fontWeight: FontWeight.w600),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -215,11 +202,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             title: "Login",
                             color: teal,
                             ontap: () {
-                              authprovider.postRequest(
-                                  "https://dummyjson.com/auth/login", {
-                                "username": emailController.text.toString(),
-                                "password": passwordController.text.toString()
-                              });
+                              // authprovider.postRequest(
+                              //     "https://dummyjson.com/auth/login", {
+                              //   "username": emailController.text.toString(),
+                              //   "password": passwordController.text.toString()
+                              // });
+                              Navigator.pushNamed(context, '/home');
                               // Navigator.push(
                               //   context,
                               //   MaterialPageRoute(
@@ -242,7 +230,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
-                                color: darkgreen),
+                                color: Secondary),
                           ),
                           // CustomTextButton(
                           //   title: "Signup",
@@ -310,8 +298,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     //       color: teal),
                     //   clipper: CustomClipPathdown(),
                     // ),
-
+                    SizedBox(
+                      height: 20,
+                    ),
                     ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: teal,
+                        ),
                         onPressed: () async {
                           bool auth = await Authentication.authentication();
                           print("authenticate: $auth");
@@ -323,8 +316,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                     builder: (context) => HomePage()));
                           }
                         },
-                        icon: Icon(Icons.fingerprint_outlined),
-                        label: Text("Authenticate"))
+                        icon: Icon(
+                          Icons.fingerprint_outlined,
+                          color: Colors.white,
+                        ),
+                        label: Text(
+                          "Authenticate",
+                          style: TextStyle(color: Colors.white),
+                        ))
                   ],
                 ),
               ),
